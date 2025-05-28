@@ -107,3 +107,19 @@ export interface PaginatedBookResponse {
     totalPages: number;
   };
 }
+
+/**
+ * Represents the detailed information about an organization's subscription and usage.
+ */
+export interface OrganizationDetails {
+  id: number;
+  name: string;
+  schemaName: string;
+  subscriptionTier: string; // Changed from subscriptionTierName for consistency
+  bookCount: number;      // Changed from currentBookCount
+  bookLimit: number;
+  userCount: number;      // Anticipating user count might be useful
+  userLimit: number;
+  createdAt: string; // ISO date string
+  // any other relevant details can be added here
+}

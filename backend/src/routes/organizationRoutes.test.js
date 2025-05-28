@@ -119,4 +119,119 @@ describe('Organization Registration API (/api/organizations)', () => {
     // - Test for schema name collision if sanitization leads to same name (though unique org name should prevent this)
     // - Test if USERS_TABLE_TEMPLATE_PATH is not configured (should ideally be caught by server startup or have a default)
   });
+
+  describe('GET /me/details', () => {
+    let authToken;
+    let tempOrgData = {}; // To hold details of an org created just for this test suite
+
+    beforeAll(async () => {
+      // 1. Register a new organization for these specific tests
+      const orgNameForDetailsTest = `DetailsOrg_${Date.now()}`;
+      const adminEmailForDetailsTest = `admin@${orgNameForDetailsTest.toLowerCase()}.com`;
+      const adminPasswordForDetailsTest = 'detailPass123';
+
+      const regResponse = await request(app)
+        .post('/api/organizations/register')
+        .send({
+          organizationName: orgNameForDetailsTest,
+          adminEmail: adminEmailForDetailsTest,
+          adminPassword: adminPasswordForDetailsTest,
+        });
+      
+      expect(regResponse.status).toBe(201); // Ensure registration was successful
+      tempOrgData = {
+          id: regResponse.body.organizationId,
+          name: orgNameForDetailsTest,
+          schemaName: regResponse.body.schemaName,
+          adminEmail: adminEmailForDetailsTest,
+          adminPassword: adminPasswordForDetailsTest,
+          // Default tier values from DB
+          subscriptionTier: 'Free', 
+          bookLimit: 100,
+          userLimit: 3,
+      };
+      
+      // 2. Log in as the admin of this new organization to get a token
+      const loginResponse = await request(app)
+        .post('/api/auth/login')
+        .send({
+          organizationIdentifier: tempOrgData.name,
+          email: tempOrgData.adminEmail,
+          password: tempOrgData.adminPassword,
+        });
+      expect(loginResponse.status).toBe(200); // Ensure login was successful
+      authToken = loginResponse.body.token;
+      expect(authToken).toBeDefined();
+    });
+
+    afterAll(async () => {
+      // Clean up the organization created for this test suite
+      if (tempOrgData.schemaName) {
+        await dropSchemaIfExists(tempOrgData.schemaName);
+      }
+      await deleteOrganizationByName(tempOrgData.name);
+      // pool.end() is in the main afterAll for the file
+    });
+
+    it('should successfully fetch organization details for an authenticated user', async () => {
+      const response = await request(app)
+        .get('/api/organizations/me/details')
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.id).toBe(tempOrgData.id);
+      expect(response.body.name).toBe(tempOrgData.name);
+      expect(response.body.schemaName).toBe(tempOrgData.schemaName);
+      expect(response.body.subscriptionTier).toBe(tempOrgData.subscriptionTier); // Default 'Free'
+      expect(response.body.bookLimit).toBe(tempOrgData.bookLimit);         // Default 100
+      expect(response.body.currentBookCount).toBe(0);         // No books added yet
+      expect(response.body.userLimit).toBe(tempOrgData.userLimit);          // Default 3
+      expect(response.body.currentUserCount).toBe(1);         // Only the admin user
+      expect(response.body.createdAt).toBeDefined();
+    });
+
+    it('should return 401 if no token is provided', async () => {
+      const response = await request(app)
+        .get('/api/organizations/me/details');
+      
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe('Not authorized, no token provided.');
+    });
+
+    it('should correctly report currentBookCount as 0 if books table does not exist (fresh org)', async () => {
+        // The beforeAll setup for this describe block already creates a fresh org.
+        // The books table is only created upon the first attempt to POST a book.
+        // So, this scenario is covered by the 'should successfully fetch' test.
+        const response = await request(app)
+            .get('/api/organizations/me/details')
+            .set('Authorization', `Bearer ${authToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.currentBookCount).toBe(0);
+    });
+
+    it('should correctly report currentBookCount after a book is added', async () => {
+        // This requires admin role to add a book, which our current token has.
+        // We need the organizationSchema from the token to add a book.
+        const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
+        const organizationSchema = decodedToken.organizationSchema;
+
+        // Add a book (minimal data)
+        await request(app)
+            .post('/api/books')
+            .set('Authorization', `Bearer ${authToken}`)
+            .send({ title: 'Test Book for Details Endpoint', author: 'Test Author' });
+            // No need to check status of book creation here, assuming it works or other tests cover it.
+
+        const response = await request(app)
+            .get('/api/organizations/me/details')
+            .set('Authorization', `Bearer ${authToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.currentBookCount).toBe(1);
+
+        // Cleanup: remove the book or rely on schema drop in afterAll.
+        // For simplicity here, relying on schema drop.
+    });
+  });
 });
