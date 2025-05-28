@@ -66,10 +66,33 @@ router.post('/', protect, authorize(['admin']), async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // Ensure books table exists for this organization
-    await ensureBooksTableExists(client, organizationSchema);
+    // 1. Fetch Organization's Book Limit & Current Book Count
+    const orgDetailsQuery = 'SELECT book_limit, subscription_tier FROM public.organizations WHERE id = $1';
+    const orgDetailsResult = await client.query(orgDetailsQuery, [req.user.organizationId]);
 
-    // Insert the new book
+    if (orgDetailsResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      // This should ideally not happen if user is authenticated with a valid org ID
+      return res.status(404).json({ message: 'Organization not found.' });
+    }
+    const { book_limit, subscription_tier } = orgDetailsResult.rows[0];
+
+    // Ensure books table exists for this organization (also creates it if it's the very first book)
+    await ensureBooksTableExists(client, organizationSchema);
+    
+    const currentBookCountQuery = `SELECT COUNT(*) as count FROM "${client.escapeIdentifier(organizationSchema)}".books;`;
+    const currentBookCountResult = await client.query(currentBookCountQuery);
+    const currentBookCount = parseInt(currentBookCountResult.rows[0].count, 10);
+
+    // 2. Check Limit
+    if (book_limit !== -1 && currentBookCount >= book_limit) {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ // 403 Forbidden is appropriate, or 402 if direct payment is expected
+        message: `Book limit of ${book_limit} reached for your current '${subscription_tier}' subscription tier. Please upgrade to add more books.`
+      });
+    }
+
+    // 3. Insert the new book (if limit not reached)
     const insertQuery = `
       INSERT INTO "${client.escapeIdentifier(organizationSchema)}".books
       (title, author, isbn, cover_image_url, publication_year, quantity)
