@@ -2,7 +2,8 @@ import React from 'react';
 
 // Basic styling for the page elements
 const pageStyle: React.CSSProperties = {
-  padding: '20px',
+  paddingTop: '20px', // Only vertical padding
+  paddingBottom: '20px', // Only vertical padding
   lineHeight: '1.6',
 };
 

@@ -17,9 +17,7 @@ const HomePage: React.FC = () => {
       }}>
         <div>
           <h2 style={{ marginBottom: '10px' }}>LibrarySoft</h2>
-          <p style={{ fontSize: '1.1em', margin: 0 }}>
-            Explore the full capabilities of LibrarySoft and transform your library management.
-          </p>
+          {/* The descriptive paragraph has been removed */}
         </div>
         <a
           href="#product-link" // Placeholder link
