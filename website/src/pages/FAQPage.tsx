@@ -1,10 +1,11 @@
 import React from 'react';
 
 const faqPageStyle: React.CSSProperties = {
-  padding: '20px',
-  maxWidth: '800px',
-  margin: '0 auto',
-  fontFamily: 'Arial, sans-serif',
+  paddingTop: '20px', // Only vertical padding
+  paddingBottom: '20px', // Only vertical padding
+  // maxWidth: '800px', // Removed to allow full width
+  // margin: '0 auto', // Removed to allow full width
+  fontFamily: 'Arial, sans-serif', // Keep font style
 };
 
 const faqItemStyle: React.CSSProperties = {
@@ -25,6 +26,7 @@ const buttonStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  color: '#333', // Added text color for the button
 };
 
 const answerStyle: React.CSSProperties = {

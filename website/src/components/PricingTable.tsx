@@ -29,13 +29,13 @@ const tierStyle: React.CSSProperties = {
 const tiers = [
   {
     name: 'Free Plan',
-    price: '$0/month',
+    price: '₹0', // Updated price
     features: ['Up to 500 Books', 'Basic Member Management', 'Single Admin User', 'Community Support'],
-    buttonText: 'Choose Free',
+    buttonText: 'Get Started', // Updated button text
   },
   {
     name: 'Pro Plan',
-    price: '$25/month',
+    price: '₹1800/month', // Updated price
     features: ['Up to 10,000 Books', 'Advanced Member Management', 'Reporting Tools', 'Email Support', 'Multiple Admin Users'],
     buttonText: 'Choose Pro',
   },
@@ -50,11 +50,11 @@ const PricingTable: React.FC = () => {
           <div key={index} style={tierStyle}>
             <h3>{tier.name}</h3>
             <p style={{ fontSize: '1.5em', fontWeight: 'bold', margin: '10px 0' }}>{tier.price}</p>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
+            <ol style={{ listStyleType: 'decimal', paddingLeft: '40px', textAlign: 'left' }}>
               {tier.features.map((feature, fIndex) => (
                 <li key={fIndex} style={{ margin: '5px 0' }}>{feature}</li>
               ))}
-            </ul>
+            </ol>
             <button style={{
               padding: '10px 20px',
               marginTop: '20px',
