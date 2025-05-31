@@ -13,6 +13,7 @@ DECLARE
   -- Bcrypt hash for 'password123'.
   user_password_hash TEXT := '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
   organization_id INTEGER; -- Will hold the SERIAL ID from organizations table
+  v_action TEXT;
 BEGIN
   -- 1. Create a sample organization and capture its ID
   -- Ensure schema_name is also inserted as it's a NOT NULL column.
@@ -50,13 +51,26 @@ BEGIN
   EXECUTE 'CREATE INDEX IF NOT EXISTS idx_users_email ON ' || quote_ident(schema_name) || '.users(email)';
 
   -- 5. Insert a sample user into the new users table
-  EXECUTE 'INSERT INTO ' || quote_ident(schema_name) || '.users (email, password_hash, role) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING'
-  USING user_email, user_password_hash, 'admin'; -- Assigning 'admin' role
+  EXECUTE 'WITH upsert AS (' ||
+  '  INSERT INTO ' || quote_ident(schema_name) || '.users (email, password_hash, role) ' ||
+  '  VALUES ($1, $2, $3) ' ||
+  '  ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, updated_at = CURRENT_TIMESTAMP ' ||
+  '  RETURNING xmax ' || -- xmax is 0 for an insert, non-0 for an update
+  ') ' ||
+  'SELECT CASE WHEN xmax = 0 THEN ''INSERT'' ELSE ''UPDATE'' END FROM upsert'
+  INTO v_action
+  USING user_email, user_password_hash, 'admin';
 
   -- Using ::TEXT to be safe with NOTICE formatting for UUID
   RAISE NOTICE 'Successfully seeded data for organization: % (ID: %)', org_name, organization_id::TEXT;
   RAISE NOTICE 'Created/Ensured schema: %', schema_name;
-  RAISE NOTICE 'Created/Ensured user: % in schema %', user_email, schema_name;
+  IF v_action = 'INSERT' THEN
+    RAISE NOTICE 'User % INSERTED in schema %.', user_email, schema_name;
+  ELSIF v_action = 'UPDATE' THEN
+    RAISE NOTICE 'User % UPDATED in schema %.', user_email, schema_name;
+  ELSE
+    RAISE NOTICE 'Ensured user % in schema % (action: % - fallback notice).', user_email, schema_name, COALESCE(v_action, 'unknown');
+  END IF;
 
 EXCEPTION
   WHEN OTHERS THEN
