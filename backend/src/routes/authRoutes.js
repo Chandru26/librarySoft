@@ -17,15 +17,19 @@ router.post('/login', async (req, res) => {
 
   try {
     // 1. Determine Organization Schema
-    //    We'll try to find the organization by its name first, then by its ID if it's a number.
-    let orgQueryText = 'SELECT id, name, schema_name FROM public.organizations WHERE name = $1';
-    let orgParams = [organizationIdentifier];
+    //    If organizationIdentifier is a number, check ID first, then case-insensitive name.
+    //    Otherwise, check case-insensitive name only.
+    let orgQueryText;
+    let orgParams;
 
     if (!isNaN(parseInt(organizationIdentifier))) {
-        // If organizationIdentifier is a number, it could be an ID.
-        // This is a simple check; a more robust solution might involve separate fields or a clearer API contract.
-        orgQueryText = 'SELECT id, name, schema_name FROM public.organizations WHERE id = $1 OR name = $2';
+        // If organizationIdentifier can be parsed as an int, it could be an ID or a name that is all numbers.
+        orgQueryText = 'SELECT id, name, schema_name FROM public.organizations WHERE id = $1 OR LOWER(name) = LOWER($2)';
         orgParams = [parseInt(organizationIdentifier), organizationIdentifier.toString()];
+    } else {
+        // If organizationIdentifier is not a number, treat as name only (case-insensitive).
+        orgQueryText = 'SELECT id, name, schema_name FROM public.organizations WHERE LOWER(name) = LOWER($1)';
+        orgParams = [organizationIdentifier];
     }
 
     const orgResult = await query(orgQueryText, orgParams);
