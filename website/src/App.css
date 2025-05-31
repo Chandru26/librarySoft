@@ -16,6 +16,13 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+  /* text-align: center; was removed from the other #root rule, so it remains removed */
+  /* max-width: 1280px; was removed from the other #root rule, so it remains removed */
+  /* margin: 0 auto; was removed from the other #root rule, so it remains removed */
 }
 
 /* General link styling */
@@ -67,16 +74,7 @@ button:hover, a.button-link:hover {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* Existing Vite default styles below */
-#root {
-  /* max-width: 1280px; removed */
-  /* margin: 0 auto; removed */
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
-  /* text-align: center; removed */
-}
+/* Existing Vite default styles below - The #root rule here has been removed and merged above */
 
 .logo {
   height: 6em;

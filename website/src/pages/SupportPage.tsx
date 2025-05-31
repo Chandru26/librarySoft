@@ -5,6 +5,8 @@ const pageStyle: React.CSSProperties = {
   paddingTop: '20px', // Only vertical padding
   paddingBottom: '20px', // Only vertical padding
   lineHeight: '1.6',
+  width: '100%', // Explicitly set width
+  boxSizing: 'border-box', // Ensure padding doesn't add to width
 };
 
 const placeholderImageStyle: React.CSSProperties = {

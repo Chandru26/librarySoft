@@ -6,6 +6,8 @@ const faqPageStyle: React.CSSProperties = {
   // maxWidth: '800px', // Removed to allow full width
   // margin: '0 auto', // Removed to allow full width
   fontFamily: 'Arial, sans-serif', // Keep font style
+  width: '100%', // Explicitly set width
+  boxSizing: 'border-box', // Ensure padding doesn't add to width
 };
 
 const faqItemStyle: React.CSSProperties = {
