@@ -35,7 +35,7 @@ const tiers = [
   },
   {
     name: 'Pro Plan',
-    price: '$1000/month', // Updated price
+    price: '₹1000/month', // Updated price
     features: ['Up to 10,000 Books', 'Advanced Member Management', 'Reporting Tools', 'Email Support', 'Multiple Admin Users'],
     buttonText: 'Choose Pro',
   },
