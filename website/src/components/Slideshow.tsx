@@ -20,7 +20,6 @@ const Slideshow: React.FC = () => {
   // For now, just static placeholders for slides
   return (
     <div style={slideshowStyle}>
-      <h2>Discover LibrarySoft</h2>
       <div style={slideStyle}>
         <h3>Slide 1: Welcome to the Future of Library Management</h3>
         <p>Placeholder text for the first slide. Describe a key benefit or feature.</p>
