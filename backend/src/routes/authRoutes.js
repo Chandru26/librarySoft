@@ -71,8 +71,9 @@ router.post('/login', async (req, res) => {
     const user = userResult.rows[0];
     console.log(`[LOGIN INFO] Found user: Email='${user.email}', ID='${user.id}'`);
 
-    console.log(`[LOGIN AUTH] Comparing password for user '${user.email}'. Provided password length: ${password.length}, Stored hash: '${user.password_hash}'`);
-    const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
+    const trimmedPassword = password.trim();
+    console.log(`[LOGIN AUTH] Comparing password for user '${user.email}'. Provided (after trim) password length: ${trimmedPassword.length}, Stored hash: '${user.password_hash}'`);
+    const isPasswordMatch = await bcrypt.compare(trimmedPassword, user.password_hash);
     console.log(`[LOGIN AUTH] Password comparison result: ${isPasswordMatch}`);
 
     if (!isPasswordMatch) {
