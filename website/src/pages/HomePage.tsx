@@ -5,7 +5,7 @@ import PricingTable from '../components/PricingTable';
 
 const HomePage: React.FC = () => {
   return (
-    <div>
+    <div style={{ paddingLeft: '30px', paddingRight: '30px' }}>
       <Slideshow />
       <div style={{
         display: 'flex',
