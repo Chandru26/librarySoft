@@ -40,13 +40,13 @@
 }
 
 /* Hover state for navigation links */
-.nav-link:hover {
+.navbar .nav-link:hover {
   background-color: #555; /* Lighter grey on hover */
   color: white; /* Ensure text color remains white on hover */
 }
 
 /* Active state for navigation links */
-.nav-link.active {
+.navbar .nav-link.active {
   background-color: #007bff; /* Blue background for active link */
   color: white; /* Ensure text color remains white */
   font-weight: bold; /* Make active link text bold */
