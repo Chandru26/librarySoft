@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { getClient, query } = require('../db/db'); // Assuming db.js is in ../db/
 const { readSqlFile } = require('../utils/fileUtils');
 const path = require('path');
+const { protect } = require('../middleware/authMiddleware'); // <-- ADDED LINE
 
 const router = express.Router();
 
