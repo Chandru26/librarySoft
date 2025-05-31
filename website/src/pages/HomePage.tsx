@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
             whiteSpace: 'nowrap', // Prevent button text from wrapping
           }}
         >
-          Go to LibrarySoft Product
+          LibrarySoft
         </a>
       </div>
       <ProductFeatures />
