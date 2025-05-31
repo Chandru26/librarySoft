@@ -16,6 +16,8 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    console.log(`[LOGIN ATTEMPT] OrgID: '${organizationIdentifier}', Email: '${email}'`); // Log initial input
+
     // 1. Determine Organization Schema
     //    If organizationIdentifier is a number, check ID first, then case-insensitive name.
     //    Otherwise, check case-insensitive name only.
@@ -31,16 +33,19 @@ router.post('/login', async (req, res) => {
         orgQueryText = 'SELECT id, name, schema_name FROM public.organizations WHERE LOWER(name) = LOWER($1)';
         orgParams = [organizationIdentifier];
     }
-
+    console.log(`[LOGIN DB] Querying organization with identifier: '${organizationIdentifier}'. SQL: ${orgQueryText.replace(/\s+/g, ' ')} PARAMS: ${JSON.stringify(orgParams)}`);
     const orgResult = await query(orgQueryText, orgParams);
+    console.log(`[LOGIN DB] Organization query result count: ${orgResult.rows.length}`);
 
     if (orgResult.rows.length === 0) {
+      console.log(`[LOGIN FAIL] Organization not found for identifier: '${organizationIdentifier}'`);
       return res.status(401).json({ message: 'Invalid organization, email, or password.' }); // Generic message
     }
 
     const organization = orgResult.rows[0];
     const schemaName = organization.schema_name;
-    const organizationId = organization.id;
+    const organizationId = organization.id; // Also log this
+    console.log(`[LOGIN INFO] Found organization: Name='${organization.name}', ID='${organizationId}', Schema='${schemaName}'`);
 
     // 2. Verify User Credentials
     //    Ensure schemaName is valid and escape it properly to prevent SQL injection.
@@ -49,25 +54,33 @@ router.post('/login', async (req, res) => {
     //    A more secure approach for dynamic schema names would be to use a dedicated function
     //    or ensure schema_name is strictly alphanumeric and underscores.
     if (!schemaName || !/^[a-zA-Z0-9_]+$/.test(schemaName)) {
-        console.error(`Invalid schema name format retrieved: ${schemaName}`);
+        console.error(`[LOGIN ERROR] Invalid schema name format retrieved: ${schemaName}`);
         return res.status(500).json({ message: 'Internal server error due to invalid schema format.' });
     }
 
-    const userQueryText = `SELECT id, email, password_hash, role FROM "${schemaName}".users WHERE email = $1`;
-    const userResult = await query(userQueryText, [email]);
+    const userQuery = `SELECT id, email, password_hash, role FROM "${schemaName}".users WHERE email = $1`; // Use a distinct var for logging
+    console.log(`[LOGIN DB] Querying user: Email='${email}' in Schema='${schemaName}'. SQL: ${userQuery.replace(/\s+/g, ' ')} PARAMS: ${JSON.stringify([email])}`);
+    const userResult = await query(userQuery, [email]); // Ensure this uses the correct query text variable
+    console.log(`[LOGIN DB] User query result count: ${userResult.rows.length}`);
 
     if (userResult.rows.length === 0) {
+      console.log(`[LOGIN FAIL] User not found: Email='${email}' in Schema='${schemaName}'`);
       return res.status(401).json({ message: 'Invalid organization, email, or password.' }); // Generic message
     }
 
     const user = userResult.rows[0];
+    console.log(`[LOGIN INFO] Found user: Email='${user.email}', ID='${user.id}'`);
 
-    // Compare password
+    console.log(`[LOGIN AUTH] Comparing password for user '${user.email}'. Provided password length: ${password.length}, Stored hash: '${user.password_hash}'`);
     const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
+    console.log(`[LOGIN AUTH] Password comparison result: ${isPasswordMatch}`);
+
     if (!isPasswordMatch) {
+      console.log(`[LOGIN FAIL] Password mismatch for user '${user.email}'`);
       return res.status(401).json({ message: 'Invalid organization, email, or password.' }); // Generic message
     }
 
+    console.log(`[LOGIN SUCCESS] User '${user.email}' authenticated successfully for organization '${organization.name}'.`);
     // 3. Generate JWT
     const jwtPayload = {
       userId: user.id,
@@ -99,7 +112,7 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error during login:', error);
+    console.error('[LOGIN ERROR] Exception caught in login route:', error); // Enhanced error log
     // Check if it's an error from trying to query a non-existent schema/table
     if (error.code === '42P01') { // undefined_table
         // This might happen if schemaName was somehow incorrect or table doesn't exist
