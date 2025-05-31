@@ -51,7 +51,8 @@ router.post('/register', async (req, res) => {
 
     // 3. Hash Admin Password
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(adminPassword, saltRounds);
+    const trimmedAdminPassword = adminPassword.trim();
+    const hashedPassword = await bcrypt.hash(trimmedAdminPassword, saltRounds);
 
     // 4. Create Admin User in New Schema
     //    a. Read the users table template
