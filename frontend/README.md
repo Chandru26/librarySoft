@@ -38,6 +38,12 @@ For a production environment, you might configure a `.env.production` file if Vi
     ```
     The application will usually be available at `http://localhost:5173` (Vite's default port, but check your terminal output). The server supports Hot Module Replacement (HMR).
 
+### API Proxy Configuration (Development)
+
+When running the frontend with `npm run dev`, the Vite development server is configured to proxy API requests. Any request made to a path starting with `/api` (e.g., `/api/auth/login`) will be automatically forwarded to the backend server, which is expected to be running at `http://localhost:3001`.
+
+This is configured in `vite.config.js`. If your backend server is running on a different port or address during development, you may need to update the `server.proxy.target` setting in `vite.config.js`.
+
 ## Building for Production
 
 1.  **Create a production build:**
