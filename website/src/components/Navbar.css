@@ -1,0 +1,69 @@
+/* General Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333; /* Dark background */
+  color: white;
+}
+
+/* Logo styling */
+.navbar-logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* Navigation links list */
+.navbar-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Default stacked vertically for mobile */
+}
+
+/* Individual navigation link item */
+.navbar-links li {
+  margin-bottom: 0.5rem; /* Spacing for vertical layout */
+}
+
+/* Styling for the navigation links themselves */
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px; /* Add some padding for better clickability */
+  display: block; /* Ensures padding is respected */
+  border-radius: 4px; /* Slightly rounded corners for links */
+}
+
+/* Hover state for navigation links */
+.nav-link:hover {
+  background-color: #555; /* Lighter grey on hover */
+  color: white; /* Ensure text color remains white on hover */
+}
+
+/* Active state for navigation links */
+.nav-link.active {
+  background-color: #007bff; /* Blue background for active link */
+  color: white; /* Ensure text color remains white */
+  font-weight: bold; /* Make active link text bold */
+}
+
+/* Desktop styles using media query */
+@media (min-width: 768px) {
+  .navbar-links {
+    flex-direction: row; /* Horizontal layout for desktops */
+  }
+
+  .navbar-links li {
+    margin-bottom: 0; /* Remove bottom margin from vertical layout */
+    margin-right: 15px; /* Spacing between horizontal links */
+  }
+
+  .navbar-links li:last-child {
+    margin-right: 0; /* No margin for the last item */
+  }
+}

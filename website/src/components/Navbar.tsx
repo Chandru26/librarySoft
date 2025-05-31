@@ -1,30 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import './Navbar.css';
 
 const Navbar: React.FC = () => {
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '10px 20px',
-      backgroundColor: '#333', // Dark background
-      color: 'white'
-    }}>
-      <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
-        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <NavLink to="/">
           LibrarySoft
-        </Link>
+        </NavLink>
       </div>
-      <ul style={{ listStyleType: 'none', margin: 0, padding: 0, display: 'flex' }}>
-        <li style={{ marginRight: '15px' }}>
-          <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
-        </li>
-        <li style={{ marginRight: '15px' }}>
-          <Link to="/support" style={{ color: 'white', textDecoration: 'none' }}>Support</Link>
+      <ul className="navbar-links">
+        <li>
+          <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Home</NavLink>
         </li>
         <li>
-          <Link to="/faq" style={{ color: 'white', textDecoration: 'none' }}>FAQ</Link>
+          <NavLink to="/support" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Support</NavLink>
+        </li>
+        <li>
+          <NavLink to="/faq" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>FAQ</NavLink>
         </li>
       </ul>
     </nav>
