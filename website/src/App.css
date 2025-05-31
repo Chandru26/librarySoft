@@ -69,10 +69,13 @@ button:hover, a.button-link:hover {
 
 /* Existing Vite default styles below */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  /* max-width: 1280px; removed */
+  /* margin: 0 auto; removed */
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+  /* text-align: center; removed */
 }
 
 .logo {

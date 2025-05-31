@@ -32,8 +32,6 @@ const SupportPage: React.FC = () => {
         <span>[Placeholder for Support Page Image]</span>
       </div>
 
-      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Support & Contact Information</h1>
-
       <section style={sectionStyle}>
         <h2>Contact Our Support Team</h2>
         <p>
@@ -69,15 +67,6 @@ const SupportPage: React.FC = () => {
           Karnataka, 560066<br />
           India
         </address>
-      </section>
-
-      <section style={sectionStyle}>
-        <h2>Frequently Asked Questions (FAQ)</h2>
-        <p>
-          Before reaching out, you might find an answer to your question in our FAQ section.
-          (Currently under development)
-        </p>
-        {/* Placeholder for FAQ content or link */}
       </section>
     </div>
   );

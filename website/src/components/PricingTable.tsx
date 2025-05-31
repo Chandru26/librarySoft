@@ -28,22 +28,16 @@ const tierStyle: React.CSSProperties = {
 
 const tiers = [
   {
-    name: 'Basic Plan',
-    price: '$10/month',
-    features: ['Up to 1,000 Books', 'Basic Member Management', 'Community Support'],
-    buttonText: 'Choose Basic',
+    name: 'Free Plan',
+    price: '$0/month',
+    features: ['Up to 500 Books', 'Basic Member Management', 'Single Admin User', 'Community Support'],
+    buttonText: 'Choose Free',
   },
   {
     name: 'Pro Plan',
     price: '$25/month',
-    features: ['Up to 10,000 Books', 'Advanced Member Management', 'Reporting Tools', 'Email Support'],
+    features: ['Up to 10,000 Books', 'Advanced Member Management', 'Reporting Tools', 'Email Support', 'Multiple Admin Users'],
     buttonText: 'Choose Pro',
-  },
-  {
-    name: 'Enterprise Plan',
-    price: 'Contact Us',
-    features: ['Unlimited Books', 'Dedicated Support', 'Custom Features', 'On-Premise Option'],
-    buttonText: 'Contact Sales',
   },
 ];
 

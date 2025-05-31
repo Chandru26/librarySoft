@@ -20,8 +20,11 @@ const Navbar: React.FC = () => {
         <li style={{ marginRight: '15px' }}>
           <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
         </li>
-        <li>
+        <li style={{ marginRight: '15px' }}>
           <Link to="/support" style={{ color: 'white', textDecoration: 'none' }}>Support</Link>
+        </li>
+        <li>
+          <Link to="/faq" style={{ color: 'white', textDecoration: 'none' }}>FAQ</Link>
         </li>
       </ul>
     </nav>
