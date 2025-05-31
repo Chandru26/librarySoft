@@ -16,8 +16,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-left: 30px;
-  padding-right: 30px;
   padding-top: 0;
   padding-bottom: 0;
   /* text-align: center; was removed from the other #root rule, so it remains removed */
