@@ -46,31 +46,40 @@ BEGIN
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   )';
+  RAISE NOTICE 'Executed CREATE TABLE IF NOT EXISTS for %.users', schema_name;
 
   -- 4. Create an index on the email column for faster lookups
   EXECUTE 'CREATE INDEX IF NOT EXISTS idx_users_email ON ' || quote_ident(schema_name) || '.users(email)';
 
-  -- 5. Insert a sample user into the new users table
-  EXECUTE 'WITH upsert AS (' ||
-  '  INSERT INTO ' || quote_ident(schema_name) || '.users (email, password_hash, role) ' ||
-  '  VALUES ($1, $2, $3) ' ||
-  '  ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, updated_at = CURRENT_TIMESTAMP ' ||
-  '  RETURNING xmax ' || -- xmax is 0 for an insert, non-0 for an update
-  ') ' ||
-  'SELECT CASE WHEN xmax = 0 THEN ''INSERT'' ELSE ''UPDATE'' END FROM upsert'
-  INTO v_action
-  USING user_email, user_password_hash, 'admin';
+  -- 5. Insert or Update sample user
+  BEGIN
+    EXECUTE 'WITH upsert AS (' ||
+    '  INSERT INTO ' || quote_ident(schema_name) || '.users (email, password_hash, role) ' ||
+    '  VALUES ($1, $2, $3) ' ||
+    '  ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = EXCLUDED.role, updated_at = CURRENT_TIMESTAMP ' ||
+    '  RETURNING xmax ' || -- xmax is 0 for an insert, non-0 for an update
+    ') ' ||
+    'SELECT CASE WHEN xmax = 0 THEN ''INSERT'' ELSE ''UPDATE'' END FROM upsert'
+    INTO v_action
+    USING user_email, user_password_hash, 'admin';
+
+    IF v_action = 'INSERT' THEN
+      RAISE NOTICE 'User % INSERTED in schema %.', user_email, schema_name;
+    ELSIF v_action = 'UPDATE' THEN
+      RAISE NOTICE 'User % UPDATED in schema %.', user_email, schema_name;
+    ELSE
+      RAISE NOTICE 'User % action result was ''%'' in schema %.', user_email, COALESCE(v_action, 'NULL_OR_UNSET'), schema_name;
+    END IF;
+  EXCEPTION
+    WHEN OTHERS THEN
+      RAISE WARNING 'SPECIFIC ERROR during user INSERT/UPDATE in %.users: % (SQLSTATE: %)', schema_name, SQLERRM, SQLSTATE;
+      -- We are not re-raising here to allow the main script's notices to still fire if possible,
+      -- but this warning should be a clear indicator if the user upsert itself failed.
+  END; -- End of nested block for user insertion
 
   -- Using ::TEXT to be safe with NOTICE formatting for UUID
   RAISE NOTICE 'Successfully seeded data for organization: % (ID: %)', org_name, organization_id::TEXT;
   RAISE NOTICE 'Created/Ensured schema: %', schema_name;
-  IF v_action = 'INSERT' THEN
-    RAISE NOTICE 'User % INSERTED in schema %.', user_email, schema_name;
-  ELSIF v_action = 'UPDATE' THEN
-    RAISE NOTICE 'User % UPDATED in schema %.', user_email, schema_name;
-  ELSE
-    RAISE NOTICE 'Ensured user % in schema % (action: % - fallback notice).', user_email, schema_name, COALESCE(v_action, 'unknown');
-  END IF;
 
 EXCEPTION
   WHEN OTHERS THEN
