@@ -10,10 +10,12 @@ const sectionStyle: React.CSSProperties = {
 };
 
 const featureStyle: React.CSSProperties = {
-  margin: '15px 0',
+  margin: '10px', // Added margin for spacing on all sides
   padding: '10px',
   border: '1px solid #f0f0f0',
   borderRadius: '5px',
+  width: 'calc(50% - 20px)', // For 2 columns, accounting for margin
+  boxSizing: 'border-box', // Ensure padding and border are included in the width calculation
 };
 
 const features = [
@@ -27,7 +29,7 @@ const ProductFeatures: React.FC = () => {
   return (
     <section style={sectionStyle}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Key Features</h2>
-      <div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
         {features.map((feature, index) => (
           <div key={index} style={featureStyle}>
             <h3>{feature.title}</h3>
