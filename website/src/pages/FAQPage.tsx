@@ -1,13 +1,13 @@
 import React from 'react';
 
 const faqPageStyle: React.CSSProperties = {
-  paddingTop: '20px', // Only vertical padding
-  paddingBottom: '20px', // Only vertical padding
-  // maxWidth: '800px', // Removed to allow full width
-  // margin: '0 auto', // Removed to allow full width
-  fontFamily: 'Arial, sans-serif', // Keep font style
-  width: '100%', // Explicitly set width
-  boxSizing: 'border-box', // Ensure padding doesn't add to width
+  paddingTop: '20px',
+  paddingBottom: '20px',
+  paddingLeft: '30px', // Added padding
+  paddingRight: '30px', // Added padding
+  fontFamily: 'Arial, sans-serif',
+  width: '100%',
+  boxSizing: 'border-box',
 };
 
 const faqItemStyle: React.CSSProperties = {

@@ -2,11 +2,13 @@ import React from 'react';
 
 // Basic styling for the page elements
 const pageStyle: React.CSSProperties = {
-  paddingTop: '20px', // Only vertical padding
-  paddingBottom: '20px', // Only vertical padding
+  paddingTop: '20px',
+  paddingBottom: '20px',
+  paddingLeft: '30px', // Added padding
+  paddingRight: '30px', // Added padding
   lineHeight: '1.6',
-  width: '100%', // Explicitly set width
-  boxSizing: 'border-box', // Ensure padding doesn't add to width
+  width: '100%',
+  boxSizing: 'border-box',
 };
 
 const placeholderImageStyle: React.CSSProperties = {
