@@ -29,9 +29,9 @@ const tierStyle: React.CSSProperties = {
 const tiers = [
   {
     name: 'Free Plan',
-    price: '₹0', // Updated price
+    price: 'Free', // Updated price
     features: ['Up to 500 Books', 'Basic Member Management', 'Single Admin User', 'Community Support'],
-    buttonText: 'Get Started', // Updated button text
+    buttonText: '', // Updated button text
   },
   {
     name: 'Pro Plan',
