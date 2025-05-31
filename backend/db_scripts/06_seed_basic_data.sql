@@ -67,4 +67,3 @@ EXCEPTION
     RAISE;
 END $$;
 -- End of script. Ensure no characters follow this line.
-```
