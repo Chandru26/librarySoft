@@ -131,6 +131,11 @@ router.get('/me/details', protect, async (req, res) => {
     }
     const orgData = orgResult.rows[0];
 
+    // Add check for organizationSchema
+    if (!organizationSchema) {
+      return res.status(400).json({ message: 'Organization schema is missing or invalid in user token.' });
+    }
+
     // 2. Count Current Users in the organization's schema
     // The users table should always exist if the schema was created successfully.
     const userCountQuery = `SELECT COUNT(*) AS count FROM "${client.escapeIdentifier(organizationSchema)}".users;`;
