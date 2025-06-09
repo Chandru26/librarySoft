@@ -5,6 +5,7 @@ import RegistrationPage from './components/RegistrationPage'; // Keep for potent
 import BookList from './components/BookList';
 import CreateBookForm from './components/CreateBookForm';
 import SubscriptionInfo from './components/SubscriptionInfo'; // Import SubscriptionInfo
+import DashboardStatistics from './components/DashboardStatistics';
 
 interface DecodedToken {
   userId: string;
@@ -143,24 +144,13 @@ const App: React.FC = () => {
               // or could add a manual refresh mechanism if needed.
               console.log("A new book has been created, BookList might need a refresh trigger.");
             }} />
+            <DashboardStatistics /> {/* Add dashboard statistics here */}
           </div>
         )}
 
         <div className="mt-8">
           <SubscriptionInfo /> {/* Display subscription info */}
         </div>
-
-        {userRole === 'admin' && (
-          <div className="my-6 p-6 bg-white shadow-lg rounded-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Admin Controls</h2>
-            <CreateBookForm onBookCreated={() => {
-              // Potentially refresh book list or show a global notification
-              // For now, BookList will refetch on its own if currentPage changes,
-              // or could add a manual refresh mechanism if needed.
-              console.log("A new book has been created, BookList might need a refresh trigger.");
-            }} />
-          </div>
-        )}
 
         <div className="mt-8">
           <BookList />
