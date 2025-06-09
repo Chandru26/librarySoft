@@ -5,7 +5,15 @@ import RegistrationPage from './components/RegistrationPage'; // Keep for potent
 import BookList from './components/BookList';
 import CreateBookForm from './components/CreateBookForm';
 import SubscriptionInfo from './components/SubscriptionInfo'; // Import SubscriptionInfo
+
 import AdminReportsPage from './components/AdminReportsPage';
+
+import ProfilePage from './components/ProfilePage';
+
+import Footer from './components/Footer'; // Import Footer
+
+import DashboardStatistics from './components/DashboardStatistics';
+
 
 interface DecodedToken {
   userId: string;
@@ -21,6 +29,7 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState<boolean>(true); // To toggle between Login and Registration
+  const [showProfilePage, setShowProfilePage] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -118,15 +127,21 @@ const App: React.FC = () => {
 
   // Authenticated view
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-indigo-600 text-white p-4 shadow-md">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <nav className="bg-indigo-700 text-white p-6 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Library System Dashboard</h1>
-          <div>
-            <span className="mr-4">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
+          <h1 className="text-2xl font-semibold">Library System Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
+            <button
+              onClick={() => setShowProfilePage(true)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+            >
+              Profile
+            </button>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
             >
               Logout
             </button>
@@ -135,7 +150,34 @@ const App: React.FC = () => {
       </nav>
 
       <div className="container mx-auto p-4">
+        {showProfilePage && <ProfilePage onClose={() => setShowProfilePage(false)} />}
+
+        {userRole === 'admin' && !showProfilePage && (
+          <div className="my-6 p-6 bg-white shadow-lg rounded-lg">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Admin Controls</h2>
+            <CreateBookForm onBookCreated={() => {
+              // Potentially refresh book list or show a global notification
+              // For now, BookList will refetch on its own if currentPage changes,
+              // or could add a manual refresh mechanism if needed.
+              console.log("A new book has been created, BookList might need a refresh trigger.");
+            }} />
+            <DashboardStatistics /> {/* Add dashboard statistics here */}
+          </div>
+        )}
+
         {userRole === 'admin' && (
+          <AdminReportsPage />
+        )}
+
+        <div className="mt-8">
+          { !showProfilePage && <SubscriptionInfo /> } {/* Display subscription info conditionally */}
+        </div>
+
+
+
+        {/* Ensure only one Admin Controls section exists and is conditional */}
+        {/* The duplicated section below was removed. The first one is kept. */}
+        {/* {userRole === 'admin' && !showProfilePage && (
           <div className="my-6 p-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Admin Controls</h2>
             <CreateBookForm onBookCreated={() => {
@@ -145,20 +187,15 @@ const App: React.FC = () => {
               console.log("A new book has been created, BookList might need a refresh trigger.");
             }} />
           </div>
-        )}
+        )} */}
 
-        {userRole === 'admin' && (
-          <AdminReportsPage />
-        )}
+
 
         <div className="mt-8">
-          <SubscriptionInfo /> {/* Display subscription info */}
-        </div>
-
-        <div className="mt-8">
-          <BookList />
+          {!showProfilePage && <BookList />}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
