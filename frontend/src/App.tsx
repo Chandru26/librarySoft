@@ -7,6 +7,11 @@ import CreateBookForm from './components/CreateBookForm';
 import SubscriptionInfo from './components/SubscriptionInfo'; // Import SubscriptionInfo
 import ProfilePage from './components/ProfilePage';
 
+import Footer from './components/Footer'; // Import Footer
+
+import DashboardStatistics from './components/DashboardStatistics';
+
+
 interface DecodedToken {
   userId: string;
   email: string;
@@ -119,12 +124,12 @@ const App: React.FC = () => {
 
   // Authenticated view
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-indigo-600 text-white p-4 shadow-md">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <nav className="bg-indigo-700 text-white p-6 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Library System Dashboard</h1>
-          <div>
-            <span className="mr-4">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
+          <h1 className="text-2xl font-semibold">Library System Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
             <button
               onClick={() => setShowProfilePage(true)}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
@@ -153,12 +158,14 @@ const App: React.FC = () => {
               // or could add a manual refresh mechanism if needed.
               console.log("A new book has been created, BookList might need a refresh trigger.");
             }} />
+            <DashboardStatistics /> {/* Add dashboard statistics here */}
           </div>
         )}
 
         <div className="mt-8">
           { !showProfilePage && <SubscriptionInfo /> } {/* Display subscription info conditionally */}
         </div>
+
 
         {/* Ensure only one Admin Controls section exists and is conditional */}
         {/* The duplicated section below was removed. The first one is kept. */}
@@ -174,10 +181,12 @@ const App: React.FC = () => {
           </div>
         )} */}
 
+
         <div className="mt-8">
           {!showProfilePage && <BookList />}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
