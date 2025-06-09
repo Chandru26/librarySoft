@@ -5,7 +5,11 @@ import RegistrationPage from './components/RegistrationPage'; // Keep for potent
 import BookList from './components/BookList';
 import CreateBookForm from './components/CreateBookForm';
 import SubscriptionInfo from './components/SubscriptionInfo'; // Import SubscriptionInfo
+
+import Footer from './components/Footer'; // Import Footer
+
 import DashboardStatistics from './components/DashboardStatistics';
+
 
 interface DecodedToken {
   userId: string;
@@ -118,12 +122,12 @@ const App: React.FC = () => {
 
   // Authenticated view
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-indigo-600 text-white p-4 shadow-md">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <nav className="bg-indigo-700 text-white p-6 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Library System Dashboard</h1>
-          <div>
-            <span className="mr-4">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
+          <h1 className="text-2xl font-semibold">Library System Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm">Welcome, {localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!).email : 'User'}! (Role: {userRole})</span>
             <button
               onClick={handleLogout}
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
@@ -156,6 +160,7 @@ const App: React.FC = () => {
           <BookList />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
