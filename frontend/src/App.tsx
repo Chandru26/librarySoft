@@ -5,6 +5,9 @@ import RegistrationPage from './components/RegistrationPage'; // Keep for potent
 import BookList from './components/BookList';
 import CreateBookForm from './components/CreateBookForm';
 import SubscriptionInfo from './components/SubscriptionInfo'; // Import SubscriptionInfo
+
+import AdminReportsPage from './components/AdminReportsPage';
+
 import ProfilePage from './components/ProfilePage';
 
 import Footer from './components/Footer'; // Import Footer
@@ -162,9 +165,14 @@ const App: React.FC = () => {
           </div>
         )}
 
+        {userRole === 'admin' && (
+          <AdminReportsPage />
+        )}
+
         <div className="mt-8">
           { !showProfilePage && <SubscriptionInfo /> } {/* Display subscription info conditionally */}
         </div>
+
 
 
         {/* Ensure only one Admin Controls section exists and is conditional */}
@@ -180,6 +188,7 @@ const App: React.FC = () => {
             }} />
           </div>
         )} */}
+
 
 
         <div className="mt-8">
