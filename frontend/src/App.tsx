@@ -157,10 +157,12 @@ const App: React.FC = () => {
         )}
 
         <div className="mt-8">
-          <SubscriptionInfo /> {/* Display subscription info */}
+          { !showProfilePage && <SubscriptionInfo /> } {/* Display subscription info conditionally */}
         </div>
 
-        {userRole === 'admin' && !showProfilePage && (
+        {/* Ensure only one Admin Controls section exists and is conditional */}
+        {/* The duplicated section below was removed. The first one is kept. */}
+        {/* {userRole === 'admin' && !showProfilePage && (
           <div className="my-6 p-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Admin Controls</h2>
             <CreateBookForm onBookCreated={() => {
@@ -170,7 +172,7 @@ const App: React.FC = () => {
               console.log("A new book has been created, BookList might need a refresh trigger.");
             }} />
           </div>
-        )}
+        )} */}
 
         <div className="mt-8">
           {!showProfilePage && <BookList />}
