@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
+const { protect, authorizeRole } = require('../middleware/authMiddleware');
 
 // Mock data for reports
 const mockReportData = {
@@ -21,7 +21,7 @@ const mockReportData = {
 };
 
 // GET /api/reports/summary - Admin only
-router.get('/summary', authenticateToken, authorizeRole('admin'), (req, res) => {
+router.get('/summary', protect, authorizeRole('admin'), (req, res) => {
   // In a real application, you would fetch this data from the database
   res.json(mockReportData);
 });

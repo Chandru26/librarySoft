@@ -62,14 +62,29 @@ const authorize = (allowedRoles) => {
   };
 };
 
-module.exports = { protect, authorize };
+/**
+ * Middleware to authorize access based on a single role.
+ * Example Usage: router.get('/admin-only', protect, authorizeRole('admin'), (req, res) => { ... });
+ * @param {string} role - The role that is allowed to access the route.
+ */
+function authorizeRole(role) {
+  return (req, res, next) => {
+    if (req.user && req.user.role === role) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Forbidden' });
+    }
+  };
+}
+
+module.exports = { protect, authorize, authorizeRole };
 
 /*
 Usage Example:
 
 const express = require('express');
 const router = express.Router();
-const { protect, authorize } = require('./middleware/authMiddleware'); // Adjust path as needed
+const { protect, authorize, authorizeRole } = require('./middleware/authMiddleware'); // Adjust path as needed
 
 // Protected route, accessible by any authenticated user
 router.get('/profile', protect, (req, res) => {
@@ -93,6 +108,14 @@ router.get('/admin-dashboard', protect, authorize(['admin']), (req, res) => {
 router.post('/books', protect, authorize(['librarian', 'admin']), (req, res) => {
   // Logic to add a new book
   res.json({ message: 'Book added successfully (mock).', user: req.user });
+});
+
+// Protected route, accessible only by authenticated users with the 'admin' role
+router.get('/admin-only', protect, authorizeRole('admin'), (req, res) => {
+  res.json({
+    message: 'This is an admin-only route.',
+    user: req.user
+  });
 });
 
 */
